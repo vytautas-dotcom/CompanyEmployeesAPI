@@ -12,6 +12,9 @@ using System.Linq;
 using System.Threading.Tasks;
 using CompanyEmployees.Extensions;
 using Microsoft.AspNetCore.HttpOverrides;
+using LoggerService;
+using NLog;
+using System.IO;
 
 namespace CompanyEmployees
 {
@@ -19,6 +22,7 @@ namespace CompanyEmployees
     {
         public Startup(IConfiguration configuration)
         {
+            LogManager.LoadConfiguration(string.Concat(Directory.GetCurrentDirectory(), "/nlog.config"));
             Configuration = configuration;
         }
 
@@ -28,6 +32,7 @@ namespace CompanyEmployees
         {
             services.ConfigureCors();
             services.ConfigureIISIntegration();
+            services.ConfigureLoggerService();
 
             services.AddControllers();
         }
