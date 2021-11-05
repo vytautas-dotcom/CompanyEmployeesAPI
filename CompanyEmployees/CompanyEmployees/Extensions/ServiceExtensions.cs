@@ -9,6 +9,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Entities;
 using Microsoft.EntityFrameworkCore;
+using Repository;
 
 namespace CompanyEmployees.Extensions
 {
@@ -37,6 +38,10 @@ namespace CompanyEmployees.Extensions
             services.AddDbContext<RepositoryContext>(options => 
                 options.UseSqlServer(configuration.GetConnectionString("SqlConnection"), builder => 
                     builder.MigrationsAssembly(nameof(CompanyEmployees))));
+        }
+        public static void ConfigureRepositoryManager(this IServiceCollection services)
+        {
+            services.AddScoped<IRepositoryManager, RepositoryManager>();
         }
     }
 }
