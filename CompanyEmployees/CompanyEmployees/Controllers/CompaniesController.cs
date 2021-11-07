@@ -49,6 +49,27 @@ namespace CompanyEmployees.Controllers
                 return Ok(companyDto);
             }
         }
+
+        [HttpGet("collection/{companyIds}", Name = "CompanyCollection")]
+        public IActionResult GetCompanyColletion(IEnumerable<Guid> companyIds)
+        {
+            if (companyIds ==  null)
+            {
+                _loggerManager.LogError("Parameter ids is null");
+                return BadRequest("Parameter ids is null");
+            }
+            var companies = _repositoryManager.Company.GetCompaniesByIds(companyIds, false);
+
+            if (companyIds.Count() != companies.Count())
+            {
+                _loggerManager.LogError("Some ids are not valid in a collection");
+                return NotFound();
+            }
+
+            var companiesToReturn = _mapper.Map<IEnumerable<CompanyDto>>(companies);
+            return Ok(companiesToReturn);
+        }
+
         [HttpPost]
         public IActionResult CreateCompany([FromBody] CompanyForCreationDto company)
         {
@@ -65,6 +86,29 @@ namespace CompanyEmployees.Controllers
             var companyToReturn = _mapper.Map<CompanyDto>(companyEntity);
 
             return CreatedAtRoute("CompanyById", new { companyId = companyToReturn.Id }, companyToReturn);
+        }
+
+        [HttpPost("collection")]
+        public IActionResult CreateCompanyColletion([FromBody] IEnumerable<CompanyForCreationDto> companies)
+        {
+            if (companies == null)
+            {
+                _loggerManager.LogError("Company collection sent from client is null.");
+                return BadRequest("Company collection is null");
+            }
+            var companyEntities = _mapper.Map<IEnumerable<Company>>(companies);
+
+            foreach (var company in companyEntities)
+            {
+                _repositoryManager.Company.CreateCompany(company);
+            }
+            _repositoryManager.Save();
+
+            var companiesToReturn = _mapper.Map<IEnumerable<CompanyDto>>(companyEntities);
+
+            var companyIds = string.Join(',', companiesToReturn.Select(c => c.Id));
+
+            return CreatedAtRoute("CompanyCollection", new { companyIds }, companiesToReturn);
         }
     }
 }
