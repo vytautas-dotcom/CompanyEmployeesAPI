@@ -37,5 +37,23 @@ namespace CompanyEmployees.Controllers
             var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
             return Ok(employeesDto);
         }
+        [HttpGet("{employeeId}")]
+        public IActionResult GetEmployeeForCompany(Guid companyId, Guid employeeId)
+        {
+            var company = _repositoryManager.Company.GetCompany(companyId, false);
+            if (company == null)
+            {
+                _loggerManager.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
+                return NotFound();
+            }
+            var employee = _repositoryManager.Employee.GetEmployee(company.Id, employeeId, false);
+            if (employee == null)
+            {
+                _loggerManager.LogInfo($"Employee with id: {employeeId} doesn't exist in the database.");
+                return NotFound();
+            }
+            var employeeDto = _mapper.Map<EmployeeDto>(employee);
+            return Ok(employeeDto);
+        }
     }
 }
