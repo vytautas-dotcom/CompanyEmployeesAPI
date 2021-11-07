@@ -38,7 +38,10 @@ namespace CompanyEmployees
             services.ConfigureRepositoryManager();
             services.AddAutoMapper(typeof(Startup));
 
-            services.AddControllers();
+            services.AddControllers(config => 
+            {
+                config.RespectBrowserAcceptHeader = true;
+            }).AddXmlDataContractSerializerFormatters();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
