@@ -41,7 +41,8 @@ namespace CompanyEmployees
             services.AddControllers(config => 
             {
                 config.RespectBrowserAcceptHeader = true;
-            }).AddXmlDataContractSerializerFormatters();
+            }).AddXmlDataContractSerializerFormatters()
+              .AddCustomCSVFormatter();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
