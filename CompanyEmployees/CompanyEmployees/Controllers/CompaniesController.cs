@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using Contracts;
 using Entities.DataTransferObjects;
+using Entities.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -33,7 +34,7 @@ namespace CompanyEmployees.Controllers
             var companiesDto = _mapper.Map<IEnumerable<CompanyDto>>(companies);
             return Ok(companiesDto);
         }
-        [HttpGet("{companyId}")]
+        [HttpGet("{companyId}", Name = "CompanyById")]
         public IActionResult GetCompany(Guid companyId)
         {
             var company = _repositoryManager.Company.GetCompany(companyId, false);
@@ -47,6 +48,23 @@ namespace CompanyEmployees.Controllers
                 var companyDto = _mapper.Map<CompanyDto>(company);
                 return Ok(companyDto);
             }
+        }
+        [HttpPost]
+        public IActionResult CreateCompany([FromBody] CompanyForCreationDto company)
+        {
+            if (company == null)
+            {
+                _loggerManager.LogError("CompanyForCreationDto object sent from client is null.");
+                return BadRequest("CompanyForCreationDto object is null");
+            }
+            var companyEntity = _mapper.Map<Company>(company);
+
+            _repositoryManager.Company.CreateCompany(companyEntity);
+            _repositoryManager.Save();
+
+            var companyToReturn = _mapper.Map<CompanyDto>(companyEntity);
+
+            return CreatedAtRoute("CompanyById", new { companyId = companyToReturn.Id }, companyToReturn);
         }
     }
 }
