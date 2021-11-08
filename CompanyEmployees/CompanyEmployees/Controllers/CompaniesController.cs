@@ -55,7 +55,7 @@ namespace CompanyEmployees.Controllers
         public IActionResult GetCompanyColletion([ModelBinder(BinderType = typeof(ArrayModelBinder))]
                                                  IEnumerable<Guid> companyIds)
         {
-            if (companyIds ==  null)
+            if (companyIds == null)
             {
                 _loggerManager.LogError("Parameter ids is null");
                 return BadRequest("Parameter ids is null");
@@ -111,6 +111,20 @@ namespace CompanyEmployees.Controllers
             var companyIds = string.Join(',', companiesToReturn.Select(c => c.Id));
 
             return CreatedAtRoute("CompanyCollection", new { companyIds }, companiesToReturn);
+        }
+        [HttpDelete("{companyId}")]
+        public IActionResult DeleteCompany(Guid companyId)
+        {
+            var company = _repositoryManager.Company.GetCompany(companyId, false);
+            if (company == null)
+            {
+                _loggerManager.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
+                return NotFound();
+            }
+            _repositoryManager.Company.DeleteCompany(company);
+            _repositoryManager.Save();
+
+            return NoContent();
         }
     }
 }
