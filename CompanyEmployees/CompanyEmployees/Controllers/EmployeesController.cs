@@ -84,5 +84,26 @@ namespace CompanyEmployees.Controllers
                 employeeId = employeeToReturn.Id
             }, employeeToReturn);
         }
+
+        [HttpDelete("{employeeId}")]
+        public IActionResult DeleteEmployeeForCompany(Guid companyId, Guid employeeId)
+        {
+            var company = _repositoryManager.Company.GetCompany(companyId, false);
+            if (company == null)
+            {
+                _loggerManager.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
+                return NotFound();
+            }
+            var employee = _repositoryManager.Employee.GetEmployee(company.Id, employeeId, false);
+            if (employee == null)
+            {
+                _loggerManager.LogInfo($"Employee with id: {employeeId} doesn't exist in the database.");
+                return NotFound();
+            }
+            _repositoryManager.Employee.DeleteEmployee(employee);
+            _repositoryManager.Save();
+
+            return NoContent();
+        }
     }
 }
