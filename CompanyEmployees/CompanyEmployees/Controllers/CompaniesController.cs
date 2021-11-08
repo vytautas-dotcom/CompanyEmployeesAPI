@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CompanyEmployees.ModelBinders;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
@@ -51,7 +52,8 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpGet("collection/{companyIds}", Name = "CompanyCollection")]
-        public IActionResult GetCompanyColletion(IEnumerable<Guid> companyIds)
+        public IActionResult GetCompanyColletion([ModelBinder(BinderType = typeof(ArrayModelBinder))]
+                                                 IEnumerable<Guid> companyIds)
         {
             if (companyIds ==  null)
             {
