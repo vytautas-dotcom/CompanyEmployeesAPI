@@ -41,7 +41,8 @@ namespace CompanyEmployees
             services.AddControllers(config => 
             {
                 config.RespectBrowserAcceptHeader = true;
-            }).AddXmlDataContractSerializerFormatters()
+            }).AddNewtonsoftJson()
+              .AddXmlDataContractSerializerFormatters()
               .AddCustomCSVFormatter();
         }
 
