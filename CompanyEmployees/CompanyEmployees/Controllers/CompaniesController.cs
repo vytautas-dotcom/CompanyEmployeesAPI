@@ -80,6 +80,13 @@ namespace CompanyEmployees.Controllers
                 _loggerManager.LogError("CompanyForCreationDto object sent from client is null.");
                 return BadRequest("CompanyForCreationDto object is null");
             }
+
+            if (!ModelState.IsValid)
+            {
+                _loggerManager.LogError("Invalid model state for the CompanyForUpdateDto object");
+                return UnprocessableEntity(ModelState);
+            }
+
             var companyEntity = _mapper.Map<Company>(company);
 
             _repositoryManager.Company.CreateCompany(companyEntity);
@@ -98,6 +105,16 @@ namespace CompanyEmployees.Controllers
                 _loggerManager.LogError("Company collection sent from client is null.");
                 return BadRequest("Company collection is null");
             }
+
+            foreach (var company in companies)
+            {
+                if (!ModelState.IsValid)
+                {
+                    _loggerManager.LogError("Invalid model state for the CompanyForUpdateDto object");
+                    return UnprocessableEntity(ModelState);
+                }
+            }
+
             var companyEntities = _mapper.Map<IEnumerable<Company>>(companies);
 
             foreach (var company in companyEntities)
@@ -134,6 +151,13 @@ namespace CompanyEmployees.Controllers
                 _loggerManager.LogError("CompanyForUpdateDto object sent from client is null.");
                 return BadRequest("CompanyForUpdateDto object is null");
             }
+
+            if (!ModelState.IsValid)
+            {
+                _loggerManager.LogError("Invalid model state for the CompanyForUpdateDto object");
+                return UnprocessableEntity(ModelState);
+            }
+
             var companyFromDb = _repositoryManager.Company.GetCompany(companyId, true);
             if (companyFromDb == null)
             {
