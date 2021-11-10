@@ -30,16 +30,16 @@ namespace CompanyEmployees.Controllers
             _mapper = mapper;
         }
         [HttpGet]
-        public IActionResult GetCompanies()
+        public async Task<IActionResult >GetCompanies()
         {
-            var companies = _repositoryManager.Company.GetAllCompanies(false);
+            var companies = await _repositoryManager.Company.GetAllCompaniesAsync(false);
             var companiesDto = _mapper.Map<IEnumerable<CompanyDto>>(companies);
             return Ok(companiesDto);
         }
         [HttpGet("{companyId}", Name = "CompanyById")]
-        public IActionResult GetCompany(Guid companyId)
+        public async Task<IActionResult> GetCompany(Guid companyId)
         {
-            var company = _repositoryManager.Company.GetCompany(companyId, false);
+            var company = await _repositoryManager.Company.GetCompanyAsync(companyId, false);
             if (company == null)
             {
                 _loggerManager.LogInfo($"Company with id: {companyId} doesn't exist in the database");
@@ -53,7 +53,7 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpGet("collection/{companyIds}", Name = "CompanyCollection")]
-        public IActionResult GetCompanyColletion([ModelBinder(BinderType = typeof(ArrayModelBinder))]
+        public async Task<IActionResult> GetCompanyColletion([ModelBinder(BinderType = typeof(ArrayModelBinder))]
                                                  IEnumerable<Guid> companyIds)
         {
             if (companyIds == null)
@@ -61,7 +61,7 @@ namespace CompanyEmployees.Controllers
                 _loggerManager.LogError("Parameter ids is null");
                 return BadRequest("Parameter ids is null");
             }
-            var companies = _repositoryManager.Company.GetCompaniesByIds(companyIds, false);
+            var companies = await _repositoryManager.Company.GetCompaniesByIdsAsync(companyIds, false);
 
             if (companyIds.Count() != companies.Count())
             {
@@ -74,7 +74,7 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpPost]
-        public IActionResult CreateCompany([FromBody] CompanyForCreationDto company)
+        public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto company)
         {
             if (company == null)
             {
@@ -91,7 +91,7 @@ namespace CompanyEmployees.Controllers
             var companyEntity = _mapper.Map<Company>(company);
 
             _repositoryManager.Company.CreateCompany(companyEntity);
-            _repositoryManager.Save();
+            await _repositoryManager.SaveAsync();
 
             var companyToReturn = _mapper.Map<CompanyDto>(companyEntity);
 
@@ -99,7 +99,7 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpPost("collection")]
-        public IActionResult CreateCompanyColletion([FromBody] IEnumerable<CompanyForCreationDto> companies)
+        public async Task<IActionResult> CreateCompanyColletion([FromBody] IEnumerable<CompanyForCreationDto> companies)
         {
             if (companies == null)
             {
@@ -122,7 +122,7 @@ namespace CompanyEmployees.Controllers
             {
                 _repositoryManager.Company.CreateCompany(company);
             }
-            _repositoryManager.Save();
+            await _repositoryManager.SaveAsync();
 
             var companiesToReturn = _mapper.Map<IEnumerable<CompanyDto>>(companyEntities);
 
@@ -131,21 +131,21 @@ namespace CompanyEmployees.Controllers
             return CreatedAtRoute("CompanyCollection", new { companyIds }, companiesToReturn);
         }
         [HttpDelete("{companyId}")]
-        public IActionResult DeleteCompany(Guid companyId)
+        public async Task<IActionResult> DeleteCompany(Guid companyId)
         {
-            var company = _repositoryManager.Company.GetCompany(companyId, false);
+            var company = await _repositoryManager.Company.GetCompanyAsync(companyId, false);
             if (company == null)
             {
                 _loggerManager.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
                 return NotFound();
             }
             _repositoryManager.Company.DeleteCompany(company);
-            _repositoryManager.Save();
+            await _repositoryManager.SaveAsync();
 
             return NoContent();
         }
         [HttpPut("{companyId}")]
-        public IActionResult UpdateCompany(Guid companyId, [FromBody] CompanyForUpdateDto company)
+        public async Task<IActionResult> UpdateCompany(Guid companyId, [FromBody] CompanyForUpdateDto company)
         {
             if (company == null)
             {
@@ -159,27 +159,27 @@ namespace CompanyEmployees.Controllers
                 return UnprocessableEntity(ModelState);
             }
 
-            var companyFromDb = _repositoryManager.Company.GetCompany(companyId, true);
+            var companyFromDb = await _repositoryManager.Company.GetCompanyAsync(companyId, true);
             if (companyFromDb == null)
             {
                 _loggerManager.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
                 return NotFound();
             }
             _mapper.Map(company, companyFromDb);
-            _repositoryManager.Save();
+            await _repositoryManager.SaveAsync();
 
             return NoContent();
         }
 
         [HttpPatch("{companyId}")]
-        public IActionResult PartiallyUpdateCompany(Guid companyId, JsonPatchDocument<CompanyForUpdateDto> patch)
+        public async Task<IActionResult> PartiallyUpdateCompany(Guid companyId, JsonPatchDocument<CompanyForUpdateDto> patch)
         {
             if (patch == null)
             {
                 _loggerManager.LogError("patchDoc object sent from client is null.");
                 return BadRequest("patchDoc object is null");
             }
-            var company = _repositoryManager.Company.GetCompany(companyId, true);
+            var company = await _repositoryManager.Company.GetCompanyAsync(companyId, true);
             if (company == null)
             {
                 _loggerManager.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
@@ -199,7 +199,7 @@ namespace CompanyEmployees.Controllers
 
             _mapper.Map(companyToPatch, company);
 
-            _repositoryManager.Save();
+            await _repositoryManager.SaveAsync();
 
             return NoContent();
         }

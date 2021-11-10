@@ -38,8 +38,8 @@ namespace Repository
             }
         }
 
-        public void Save()
+        public Task SaveAsync()
             =>
-                _repositoryContext.SaveChanges();
+                _repositoryContext.SaveChangesAsync();
     }
 }
