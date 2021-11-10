@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CompanyEmployees.ActionFilters;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
@@ -58,19 +59,9 @@ namespace CompanyEmployees.Controllers
             return Ok(employeeDto);
         }
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateEmployeeForCompany(Guid companyId, [FromBody] EmployeeForCreationDto employee)
         {
-            if (employee == null)
-            {
-                _loggerManager.LogError("EmployeeForCreationDto object sent from client is null.");
-                return BadRequest("EmployeeForCreationDto object is null");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                _loggerManager.LogError("Invalid model state for the EmployeeForCreationDto object");
-                return UnprocessableEntity(ModelState);
-            }
 
             var company = await _repositoryManager.Company.GetCompanyAsync(companyId, false);
             if (company == null)
@@ -114,21 +105,11 @@ namespace CompanyEmployees.Controllers
             return NoContent();
         }
         [HttpPut("{employeeId}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateEmployeeForCompany(Guid companyId, 
                                                       Guid employeeId, 
                                                       [FromBody] EmployeeForUpdateDto employee)
         {
-            if (employee == null)
-            {
-                _loggerManager.LogError("EmployeeForUpdateDto object sent from client is null.");
-                return BadRequest("EmployeeForUpdateDto object is null");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                _loggerManager.LogError("Invalid model state for the EmployeeForUpdateDto object");
-                return UnprocessableEntity(ModelState);
-            }
 
             var company = await _repositoryManager.Company.GetCompanyAsync(companyId, false);
             if (company == null)

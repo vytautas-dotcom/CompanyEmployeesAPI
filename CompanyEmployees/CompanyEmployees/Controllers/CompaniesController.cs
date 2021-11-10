@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using CompanyEmployees.ActionFilters;
 using CompanyEmployees.ModelBinders;
 using Contracts;
 using Entities.DataTransferObjects;
@@ -74,19 +75,9 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpPost]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto company)
         {
-            if (company == null)
-            {
-                _loggerManager.LogError("CompanyForCreationDto object sent from client is null.");
-                return BadRequest("CompanyForCreationDto object is null");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                _loggerManager.LogError("Invalid model state for the CompanyForUpdateDto object");
-                return UnprocessableEntity(ModelState);
-            }
 
             var companyEntity = _mapper.Map<Company>(company);
 
@@ -99,22 +90,9 @@ namespace CompanyEmployees.Controllers
         }
 
         [HttpPost("collection")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateCompanyColletion([FromBody] IEnumerable<CompanyForCreationDto> companies)
         {
-            if (companies == null)
-            {
-                _loggerManager.LogError("Company collection sent from client is null.");
-                return BadRequest("Company collection is null");
-            }
-
-            foreach (var company in companies)
-            {
-                if (!ModelState.IsValid)
-                {
-                    _loggerManager.LogError("Invalid model state for the CompanyForUpdateDto object");
-                    return UnprocessableEntity(ModelState);
-                }
-            }
 
             var companyEntities = _mapper.Map<IEnumerable<Company>>(companies);
 
@@ -145,19 +123,9 @@ namespace CompanyEmployees.Controllers
             return NoContent();
         }
         [HttpPut("{companyId}")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> UpdateCompany(Guid companyId, [FromBody] CompanyForUpdateDto company)
         {
-            if (company == null)
-            {
-                _loggerManager.LogError("CompanyForUpdateDto object sent from client is null.");
-                return BadRequest("CompanyForUpdateDto object is null");
-            }
-
-            if (!ModelState.IsValid)
-            {
-                _loggerManager.LogError("Invalid model state for the CompanyForUpdateDto object");
-                return UnprocessableEntity(ModelState);
-            }
 
             var companyFromDb = await _repositoryManager.Company.GetCompanyAsync(companyId, true);
             if (companyFromDb == null)
