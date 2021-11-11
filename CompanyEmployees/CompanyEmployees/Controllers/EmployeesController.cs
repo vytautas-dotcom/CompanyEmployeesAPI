@@ -7,6 +7,7 @@ using Entities.RequestFeatures;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.JsonPatch;
 using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,6 +40,9 @@ namespace CompanyEmployees.Controllers
                 return NotFound();
             }
             var employees = await _repositoryManager.Employee.GetEmployeesAsync(company.Id, employeeParameters, false);
+
+            Response.Headers.Add("X-Pagination", JsonConvert.SerializeObject(employees.MetaData));
+
             var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
             return Ok(employeesDto);
         }
