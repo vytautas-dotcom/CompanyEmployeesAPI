@@ -109,14 +109,11 @@ namespace CompanyEmployees.Controllers
             return CreatedAtRoute("CompanyCollection", new { companyIds }, companiesToReturn);
         }
         [HttpDelete("{companyId}")]
+        [ServiceFilter(typeof(ValidateCompanyExistsAttribute))]
         public async Task<IActionResult> DeleteCompany(Guid companyId)
         {
-            var company = await _repositoryManager.Company.GetCompanyAsync(companyId, false);
-            if (company == null)
-            {
-                _loggerManager.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
-                return NotFound();
-            }
+            var company = HttpContext.Items["company"] as Company;
+
             _repositoryManager.Company.DeleteCompany(company);
             await _repositoryManager.SaveAsync();
 
@@ -124,15 +121,12 @@ namespace CompanyEmployees.Controllers
         }
         [HttpPut("{companyId}")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
+        [ServiceFilter(typeof(ValidateCompanyExistsAttribute))]
         public async Task<IActionResult> UpdateCompany(Guid companyId, [FromBody] CompanyForUpdateDto company)
         {
 
-            var companyFromDb = await _repositoryManager.Company.GetCompanyAsync(companyId, true);
-            if (companyFromDb == null)
-            {
-                _loggerManager.LogInfo($"Company with id: {companyId} doesn't exist in the database.");
-                return NotFound();
-            }
+            var companyFromDb = HttpContext.Items["company"] as Company;
+
             _mapper.Map(company, companyFromDb);
             await _repositoryManager.SaveAsync();
 
