@@ -22,7 +22,9 @@ namespace Repository
                                                                    EmployeeParameters employeeParameters,
                                                                    bool trackChanges)
         {
-            var employees = await FindByCondition(e => e.CompanyId.Equals(companyId), trackChanges)
+            var employees = await FindByCondition(e => e.CompanyId.Equals(companyId) &&
+                                                      (e.Age >= employeeParameters.MinAge &&
+                                                       e.Age <= employeeParameters.MaxAge), trackChanges)
                                   .OrderBy(e => e.Name)
                                   .ToListAsync();
 
