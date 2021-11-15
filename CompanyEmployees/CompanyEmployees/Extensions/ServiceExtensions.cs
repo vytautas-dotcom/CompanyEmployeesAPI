@@ -13,6 +13,7 @@ using Repository;
 using CompanyEmployees.Formatting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
+using Microsoft.AspNetCore.Mvc.Versioning;
 
 namespace CompanyEmployees.Extensions
 {
@@ -83,6 +84,7 @@ namespace CompanyEmployees.Extensions
                 options.ReportApiVersions = true;
                 options.AssumeDefaultVersionWhenUnspecified = true;
                 options.DefaultApiVersion = new ApiVersion(1, 0);
+                options.ApiVersionReader = new HeaderApiVersionReader("api-version");
             });
         }
     }
