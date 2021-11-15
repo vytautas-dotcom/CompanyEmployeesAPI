@@ -63,6 +63,8 @@ namespace CompanyEmployees
 
             services.AddCustomMediaTypes();
             services.AddScoped<EmployeeLinks>();
+
+            services.ConfigureVersioning();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
