@@ -19,6 +19,7 @@ using Contracts;
 using CompanyEmployees.ActionFilters;
 using Repository.DataShaping;
 using Entities.DataTransferObjects;
+using CompanyEmployees.Utility;
 
 namespace CompanyEmployees
 {
@@ -44,6 +45,7 @@ namespace CompanyEmployees
             services.AddScoped<ValidationFilterAttribute>();
             services.AddScoped<ValidateCompanyExistsAttribute>();
             services.AddScoped<ValidateEmployeeForCompanyExistsAttribute>();
+            services.AddScoped<ValidateMediaTypeAttribute>();
 
             services.AddScoped<IDataShaper<EmployeeDto>, DataShaper<EmployeeDto>>();
 
@@ -58,6 +60,9 @@ namespace CompanyEmployees
             }).AddNewtonsoftJson()
               .AddXmlDataContractSerializerFormatters()
               .AddCustomCSVFormatter();
+
+            services.AddCustomMediaTypes();
+            services.AddScoped<EmployeeLinks>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)

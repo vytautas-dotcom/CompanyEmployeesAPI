@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using CompanyEmployees.ActionFilters;
+using CompanyEmployees.Utility;
 using Contracts;
 using Entities.DataTransferObjects;
 using Entities.Models;
@@ -22,19 +23,20 @@ namespace CompanyEmployees.Controllers
         private readonly IRepositoryManager _repositoryManager;
         private readonly ILoggerManager _loggerManager;
         private readonly IMapper _mapper;
-        private readonly IDataShaper<EmployeeDto> _dataShaper;
+        private readonly EmployeeLinks _employeeLinks;
 
         public EmployeesController(IRepositoryManager repositoryManager, 
                                    ILoggerManager loggerManager, 
                                    IMapper mapper,
-                                   IDataShaper<EmployeeDto> dataShaper)
+                                   EmployeeLinks employeeLinks)
         {
             _repositoryManager = repositoryManager;
             _loggerManager = loggerManager;
             _mapper = mapper;
-            _dataShaper = dataShaper;
+            _employeeLinks = employeeLinks;
         }
         [HttpGet]
+        [ServiceFilter(typeof(ValidateMediaTypeAttribute))]
         public async Task<IActionResult> GetEmployeesForCompany(Guid companyId, 
                                                                 [FromQuery] EmployeeParameters employeeParameters)
         {
@@ -53,9 +55,9 @@ namespace CompanyEmployees.Controllers
 
             var employeesDto = _mapper.Map<IEnumerable<EmployeeDto>>(employees);
 
-            var employeeFromDataShaper = _dataShaper.ShapeData(employeesDto, employeeParameters.Fields);
+            var links = _employeeLinks.TryGenerateLinks(employeesDto, employeeParameters.Fields, companyId, HttpContext);
 
-            return Ok(employeeFromDataShaper);
+            return links.HasLinks ? Ok(links.LinkedEntities) : Ok(links.ShapedEntities);
         }
         [HttpGet("{employeeId}", Name = nameof(GetEmployeeForCompany))]
         public async Task<IActionResult> GetEmployeeForCompany(Guid companyId, Guid employeeId)
