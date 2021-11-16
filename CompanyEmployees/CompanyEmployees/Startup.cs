@@ -68,6 +68,7 @@ namespace CompanyEmployees
             services.ConfigureVersioning();
 
             services.ConfigureResponseCaching();
+            services.ConfigureHttpCacheHeaders();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
@@ -92,6 +93,7 @@ namespace CompanyEmployees
             });
 
             app.UseResponseCaching();
+            app.UseHttpCacheHeaders();
 
             app.UseRouting();
 
