@@ -57,6 +57,7 @@ namespace CompanyEmployees
             services.AddControllers(config => 
             {
                 config.RespectBrowserAcceptHeader = true;
+                config.CacheProfiles.Add("Duration-90seconds", new CacheProfile { Duration = 90 });
             }).AddNewtonsoftJson()
               .AddXmlDataContractSerializerFormatters()
               .AddCustomCSVFormatter();

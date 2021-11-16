@@ -18,6 +18,7 @@ namespace CompanyEmployees.Controllers
 {
     [ApiVersion("1.0")]
     [Route("api/[controller]")]
+    [ResponseCache(CacheProfileName = "Duration-90seconds")]
     [ApiController]
     public class CompaniesController : ControllerBase
     {
