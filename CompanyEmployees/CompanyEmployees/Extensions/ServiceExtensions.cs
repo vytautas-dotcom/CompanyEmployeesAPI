@@ -87,5 +87,8 @@ namespace CompanyEmployees.Extensions
                 options.ApiVersionReader = new HeaderApiVersionReader("api-version");
             });
         }
+        public static void ConfigureResponseCaching(this IServiceCollection services)
+            =>
+                services.AddResponseCaching();
     }
 }

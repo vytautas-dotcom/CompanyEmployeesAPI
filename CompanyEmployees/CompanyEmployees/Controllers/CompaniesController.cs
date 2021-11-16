@@ -44,6 +44,7 @@ namespace CompanyEmployees.Controllers
             return Ok(companiesDto);
         }
         [HttpGet("{companyId}", Name = "CompanyById")]
+        [ResponseCache(Duration = 60)]
         public async Task<IActionResult> GetCompany(Guid companyId)
         {
             var company = await _repositoryManager.Company.GetCompanyAsync(companyId, false);

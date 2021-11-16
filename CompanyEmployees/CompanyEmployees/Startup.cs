@@ -65,6 +65,8 @@ namespace CompanyEmployees
             services.AddScoped<EmployeeLinks>();
 
             services.ConfigureVersioning();
+
+            services.ConfigureResponseCaching();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
@@ -87,6 +89,8 @@ namespace CompanyEmployees
             {
                 ForwardedHeaders = ForwardedHeaders.All
             });
+
+            app.UseResponseCaching();
 
             app.UseRouting();
 
