@@ -14,6 +14,7 @@ using CompanyEmployees.Formatting;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning;
+using Marvin.Cache.Headers;
 
 namespace CompanyEmployees.Extensions
 {
@@ -39,8 +40,8 @@ namespace CompanyEmployees.Extensions
         }
         public static void ConfigureSqlConnection(this IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContext<RepositoryContext>(options => 
-                options.UseSqlServer(configuration.GetConnectionString("SqlConnection"), builder => 
+            services.AddDbContext<RepositoryContext>(options =>
+                options.UseSqlServer(configuration.GetConnectionString("SqlConnection"), builder =>
                     builder.MigrationsAssembly(nameof(CompanyEmployees))));
         }
         public static void ConfigureRepositoryManager(this IServiceCollection services)
@@ -93,6 +94,15 @@ namespace CompanyEmployees.Extensions
 
         public static void ConfigureHttpCacheHeaders(this IServiceCollection services)
             =>
-                services.AddHttpCacheHeaders();
+                services.AddHttpCacheHeaders(
+                    expirationOptions =>
+                    {
+                    expirationOptions.MaxAge = 85;
+                    expirationOptions.CacheLocation = CacheLocation.Private;
+                    },
+                    validationOptions =>
+                    {
+                        validationOptions.MustRevalidate = true;
+                    });
     }
 }
