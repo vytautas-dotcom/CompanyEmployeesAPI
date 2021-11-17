@@ -20,6 +20,7 @@ using CompanyEmployees.ActionFilters;
 using Repository.DataShaping;
 using Entities.DataTransferObjects;
 using CompanyEmployees.Utility;
+using AspNetCoreRateLimit;
 
 namespace CompanyEmployees
 {
@@ -69,6 +70,11 @@ namespace CompanyEmployees
 
             services.ConfigureResponseCaching();
             services.ConfigureHttpCacheHeaders();
+
+            services.AddMemoryCache();
+            services.ConfigureRateLimitingOptions();
+            services.AddHttpContextAccessor();
+
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
@@ -94,6 +100,8 @@ namespace CompanyEmployees
 
             app.UseResponseCaching();
             app.UseHttpCacheHeaders();
+
+            app.UseIpRateLimiting();
 
             app.UseRouting();
 

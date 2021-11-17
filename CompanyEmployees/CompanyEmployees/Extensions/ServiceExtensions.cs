@@ -15,6 +15,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Marvin.Cache.Headers;
+using AspNetCoreRateLimit;
 
 namespace CompanyEmployees.Extensions
 {
@@ -97,12 +98,33 @@ namespace CompanyEmployees.Extensions
                 services.AddHttpCacheHeaders(
                     expirationOptions =>
                     {
-                    expirationOptions.MaxAge = 85;
-                    expirationOptions.CacheLocation = CacheLocation.Private;
+                        expirationOptions.MaxAge = 85;
+                        expirationOptions.CacheLocation = CacheLocation.Private;
                     },
                     validationOptions =>
                     {
                         validationOptions.MustRevalidate = true;
                     });
+
+        public static void ConfigureRateLimitingOptions(this IServiceCollection services)
+        {
+            var rateLimitRules = new List<RateLimitRule>
+            {
+                new RateLimitRule
+                {
+                    Endpoint = "*",
+                    Limit = 3,
+                    Period = "5m"
+                }
+            };
+            services.Configure<IpRateLimitOptions>(options =>
+            {
+                options.GeneralRules = rateLimitRules;
+            });
+            services.AddSingleton<IRateLimitCounterStore, MemoryCacheRateLimitCounterStore>();
+            services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
+            services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
+            services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+        }
     }
 }
