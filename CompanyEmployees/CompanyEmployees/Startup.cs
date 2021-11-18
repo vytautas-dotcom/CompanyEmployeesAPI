@@ -21,6 +21,7 @@ using Repository.DataShaping;
 using Entities.DataTransferObjects;
 using CompanyEmployees.Utility;
 using AspNetCoreRateLimit;
+using Repository;
 
 namespace CompanyEmployees
 {
@@ -77,6 +78,10 @@ namespace CompanyEmployees
 
             services.AddAuthentication();
             services.ConfigureIdentity();
+
+            services.ConfigureJWT(Configuration);
+
+            services.AddScoped<IAuthenticationManager, AuthenticationManager>();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)

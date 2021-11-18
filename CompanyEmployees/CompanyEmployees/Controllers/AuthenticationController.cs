@@ -20,12 +20,17 @@ namespace CompanyEmployees.Controllers
         private readonly ILoggerManager _loggerManager;
         private readonly IMapper _mapper;
         private readonly UserManager<User> _userManager;
+        private readonly IAuthenticationManager _authenticationManager;
 
-        public AuthenticationController(ILoggerManager loggerManager, IMapper mapper, UserManager<User> userManager)
+        public AuthenticationController(ILoggerManager loggerManager,
+                                        IMapper mapper,
+                                        UserManager<User> userManager,
+                                        IAuthenticationManager authenticationManager)
         {
             _loggerManager = loggerManager;
             _mapper = mapper;
             _userManager = userManager;
+            _authenticationManager = authenticationManager;
         }
         
         [HttpPost]
@@ -47,6 +52,17 @@ namespace CompanyEmployees.Controllers
             await _userManager.AddToRolesAsync(user, userForRegistrationDto.Roles);
 
             return StatusCode(201);
+        }
+        [HttpPost("login")]
+        [ServiceFilter(typeof(ValidationFilterAttribute))]
+        public async Task<IActionResult> Authenticate([FromBody] UserForAuthenticationDto userForAuthenticationDto)
+        {
+            if (!await _authenticationManager.ValidateUser(userForAuthenticationDto))
+            {
+                _loggerManager.LogWarn($"{nameof(Authenticate)}: Authentication failed. Wrong user name or password.");
+                return Unauthorized();
+            }
+            return Ok(new { Token = await _authenticationManager.CreateToken() });
         }
     }
 }
