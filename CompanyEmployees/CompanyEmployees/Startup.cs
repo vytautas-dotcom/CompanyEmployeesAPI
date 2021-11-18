@@ -75,6 +75,8 @@ namespace CompanyEmployees
             services.ConfigureRateLimitingOptions();
             services.AddHttpContextAccessor();
 
+            services.AddAuthentication();
+            services.ConfigureIdentity();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
@@ -105,6 +107,7 @@ namespace CompanyEmployees
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

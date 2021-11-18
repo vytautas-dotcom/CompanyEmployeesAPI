@@ -16,6 +16,8 @@ using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.AspNetCore.Mvc.Versioning;
 using Marvin.Cache.Headers;
 using AspNetCoreRateLimit;
+using Entities.Models;
+using Microsoft.AspNetCore.Identity;
 
 namespace CompanyEmployees.Extensions
 {
@@ -113,7 +115,7 @@ namespace CompanyEmployees.Extensions
                 new RateLimitRule
                 {
                     Endpoint = "*",
-                    Limit = 3,
+                    Limit = 30,
                     Period = "5m"
                 }
             };
@@ -125,6 +127,21 @@ namespace CompanyEmployees.Extensions
             services.AddSingleton<IIpPolicyStore, MemoryCacheIpPolicyStore>();
             services.AddSingleton<IRateLimitConfiguration, RateLimitConfiguration>();
             services.AddSingleton<IProcessingStrategy, AsyncKeyLockProcessingStrategy>();
+        }
+        public static void ConfigureIdentity(this IServiceCollection services)
+        {
+            var builder = services.AddIdentityCore<User>(options =>
+            {
+                options.Password.RequireDigit = true;
+                options.Password.RequireLowercase = true;
+                options.Password.RequireUppercase = true;
+                options.Password.RequireNonAlphanumeric = true;
+                options.Password.RequiredLength = 10;
+                options.User.RequireUniqueEmail = true;
+            });
+            builder = new IdentityBuilder(builder.UserType, typeof(IdentityRole), builder.Services);
+
+            builder.AddEntityFrameworkStores<RepositoryContext>().AddDefaultTokenProviders();
         }
     }
 }
