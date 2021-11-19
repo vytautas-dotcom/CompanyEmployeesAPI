@@ -35,7 +35,7 @@ namespace CompanyEmployees.Controllers
             _repositoryManager = repositoryManager;
             _mapper = mapper;
         }
-        [HttpGet(Name = "GetCompanies"), Authorize]
+        [HttpGet(Name = "GetCompanies"), Authorize(Roles = "Manager")]
         public async Task<IActionResult> GetCompanies([FromQuery] CompanyParameters companyParameters)
         {
             var companies = await _repositoryManager.Company.GetAllCompaniesAsync(companyParameters, false);
