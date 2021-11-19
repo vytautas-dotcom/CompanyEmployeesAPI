@@ -82,6 +82,8 @@ namespace CompanyEmployees
             services.ConfigureJWT(Configuration);
 
             services.AddScoped<IAuthenticationManager, AuthenticationManager>();
+
+            services.ConfigureSwagger();
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env, ILoggerManager logger)
@@ -94,6 +96,13 @@ namespace CompanyEmployees
             {
                 app.UseHsts();
             }
+
+            app.UseSwagger();
+            app.UseSwaggerUI(s =>
+            {
+                s.SwaggerEndpoint("/swagger/v1/swagger.json", "VT API v1");
+                s.SwaggerEndpoint("/swagger/v2/swagger.json", "VT API v2");
+            });
 
             app.ConfigureExceptionHandler(logger);
 

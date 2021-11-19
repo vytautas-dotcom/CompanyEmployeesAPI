@@ -21,6 +21,7 @@ namespace CompanyEmployees.Controllers
     [Route("api/[controller]")]
     //[ResponseCache(CacheProfileName = "Duration-90seconds")]
     [ApiController]
+    [ApiExplorerSettings(GroupName = "v1")]
     public class CompaniesController : ControllerBase
     {
         private readonly ILoggerManager _loggerManager;

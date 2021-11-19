@@ -21,6 +21,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
+using Microsoft.OpenApi.Models;
 
 namespace CompanyEmployees.Extensions
 {
@@ -171,5 +172,14 @@ namespace CompanyEmployees.Extensions
                     };
                 });
         }
+        public static void ConfigureSwagger(this IServiceCollection services)
+        {
+            services.AddSwaggerGen(s =>
+            {
+                s.SwaggerDoc("v1", new OpenApiInfo { Title = "VT API", Version = "v1" });
+                s.SwaggerDoc("v2", new OpenApiInfo { Title = "VT API", Version = "v2" });
+            });
+        }
+                
     }
 }
