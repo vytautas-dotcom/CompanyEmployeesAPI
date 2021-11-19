@@ -36,6 +36,12 @@ namespace CompanyEmployees.Controllers
             _repositoryManager = repositoryManager;
             _mapper = mapper;
         }
+
+        /// <summary>
+        /// Gets the list of all companies
+        /// </summary>
+        /// <param name="companyParameters"></param>
+        /// <returns>The companies list</returns>
         [HttpGet(Name = "GetCompanies"), Authorize(Roles = "Administrator")]
         public async Task<IActionResult> GetCompanies([FromQuery] CompanyParameters companyParameters)
         {
@@ -84,6 +90,11 @@ namespace CompanyEmployees.Controllers
             return Ok(companiesToReturn);
         }
 
+        /// <summary>
+        /// Creates a new company
+        /// </summary>
+        /// <param name="company"></param>
+        /// <returns>A newly created company</returns>
         [HttpPost(Name = "CreateCompany")]
         [ServiceFilter(typeof(ValidationFilterAttribute))]
         public async Task<IActionResult> CreateCompany([FromBody] CompanyForCreationDto company)

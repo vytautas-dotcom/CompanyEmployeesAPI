@@ -22,6 +22,8 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using Microsoft.OpenApi.Models;
+using System.Reflection;
+using System.IO;
 
 namespace CompanyEmployees.Extensions
 {
@@ -195,6 +197,10 @@ namespace CompanyEmployees.Extensions
                     }
                 });
                 s.SwaggerDoc("v2", new OpenApiInfo { Title = "VT API", Version = "v2" });
+
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                s.IncludeXmlComments(xmlPath);
 
                 s.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
                 {

@@ -1,0 +1,22 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>CompanyEmployees</name>
+    </assembly>
+    <members>
+        <member name="M:CompanyEmployees.Controllers.CompaniesController.GetCompanies(Entities.RequestFeatures.CompanyParameters)">
+            <summary>
+            Gets the list of all companies
+            </summary>
+            <param name="companyParameters"></param>
+            <returns>The companies list</returns>
+        </member>
+        <member name="M:CompanyEmployees.Controllers.CompaniesController.CreateCompany(Entities.DataTransferObjects.CompanyForCreationDto)">
+            <summary>
+            Creates a new company
+            </summary>
+            <param name="company"></param>
+            <returns>A newly created company</returns>
+        </member>
+    </members>
+</doc>
